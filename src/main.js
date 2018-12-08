@@ -3,20 +3,20 @@ import { Boid } from './boid.js'
 function main() {
     let population = [];
     const MAX_BOIDS = 100; 
-    const VIEW_DIST = 50; // range of sight for boids
+    const VIEW_DIST = 25; // range of sight for boids
     const DESIRED_SPEED = 3;
 
     for (let i = 0; i < MAX_BOIDS; ++i) {
         population.push(new Boid());
     }
-    console.log(population);
+    
 
 
     let canvas = document.getElementById('simulation-canvas');
     let ctx = canvas.getContext('2d');
 
     let v = new Victor(0,0);
-    console.log(v);
+    
 
     let target = new Victor(50,150);
     
@@ -42,7 +42,7 @@ function main() {
             var dist = boid.pos.distance(other.pos);
             if (dist < desiredSeparation && dist > 0) {
                 // Calculate vector pointing away from the flockmate, weighted by distance
-                var diff = boid.position.clone().subtract(other.pos).normalize().divideScalar(dist);
+                var diff = boid.pos.clone().subtract(other.pos).normalize().divideScalar(dist);
                 desired.add(diff);
             }
         }
@@ -67,14 +67,14 @@ function main() {
             var other = flockmates[i];
             sum.add(other.v);
         }
-    
+        
         if (sum.isZero()) {
             return sum;
         }
         // If the sum of all flockmate's velocities isn't nul
         // We want our desired velocity to be of the length of our desired speed
         var desired = sum.normalize().multiplyScalar(DESIRED_SPEED);
-
+        
         // We then calculate the steering force needed to get to that desired velocity
         return steer(boid, desired);
         
@@ -92,11 +92,11 @@ function main() {
         // Get the average position of all nearby boids.
         for (var i = 0, l = flockmates.length; i < l; ++i) {
             var other = flockmates[i];
-            average.add(other.position);
+            average.add(other.pos);
         }
     
         // The average is the the sum of vectors divided by the number of flockmates
-        var destination = average.divideScalar(boids.length);
+        var destination = average.divideScalar(flockmates.length);
         
         // We calculate the vector from this boid to the destination point
         var desired = destination.subtract(boid.pos);
@@ -119,26 +119,25 @@ function main() {
     function update() {
 
         // update target
-        target.add(new Victor(0.1,0));
+        //target.add(new Victor(0.1,0));
 
 
         for (let boid of population) {
             // find nearby boids (flockmates)
             let flockmates = 
                 population.filter(
-                    (other) => {boid.pos.distance(other.pos) <= VIEW_DIST});
-
+                    (other) => {return(boid.pos.distance(other.pos) <= VIEW_DIST)});
 
             // Make decision
 
             // Steering Force based on target
-            let desired = target.clone().subtract(boid.pos);
+            // let desired = target.clone().subtract(boid.pos);
 
-            if (!desired.isZero()) {
-                desired.normalize().multiplyScalar(DESIRED_SPEED);
-            }
+            // if (!desired.isZero()) {
+            //     desired.normalize().multiplyScalar(DESIRED_SPEED);
+            // }
 
-            let steeringForce = steer(boid, desired);
+            //let steeringForce = steer(boid, desired);
 
             // calc other forces
             let sepForce = calcSeparation(boid, flockmates);
@@ -146,7 +145,7 @@ function main() {
             let cohForce = calcCohesion(boid, flockmates);
 
             // add forces
-            boid.a = steeringForce.add(sepForce).add(aliForce).add(cohForce);
+            boid.a.add(sepForce).add(aliForce).add(cohForce);
             boid.a = limitForce(boid.a);
 
             // Update velocity
@@ -156,7 +155,7 @@ function main() {
             boid.pos.add(boid.v);
 
             // Reset acceleration
-            boid.a.zero();
+            //boid.a.zero();
         }
     }
 
