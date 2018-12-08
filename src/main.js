@@ -30,6 +30,20 @@ function main() {
         return vector;
     }
 
+    function wrapPosition(pos) {
+        if (pos.x < 0) {
+            pos.x = canvas.width;
+        } else if (pos.x > canvas.width) {
+            pos.x = 0;
+        }
+
+        if (pos.y < 0) {
+            pos.y = canvas.height;
+        } else if (pos.y > canvas.height) {
+            pos.y = 0;
+        }
+    }
+
     function calcSeparation(boid, flockmates) {
         // Choose a distance at which boids start avoiding each other
         var desiredSeparation = VIEW_DIST / 2;
@@ -153,6 +167,8 @@ function main() {
 
             // Apply velocity to position
             boid.pos.add(boid.v);
+
+            wrapPosition(boid.pos);
 
             // Reset acceleration
             //boid.a.zero();
