@@ -1,12 +1,12 @@
 import { Boid } from './boid.js'
 
 function main() {
-    let flock = [];
+    let population = [];
     const MAX_BOIDS = 100; 
     for (let i = 0; i < MAX_BOIDS; ++i) {
-        flock.push(new Boid());
+        population.push(new Boid());
     }
-    console.log(flock);
+    console.log(population);
 
 
     let canvas = document.getElementById('simulation-canvas');
@@ -31,7 +31,7 @@ function main() {
 
 
 
-        for (let boid of flock) {
+        for (let boid of population) {
             // Make decision
             let desired = target.clone().subtract(boid.pos);
 
@@ -55,7 +55,7 @@ function main() {
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for (let boid of flock) {
+        for (let boid of population) {
             ctx.beginPath();
             ctx.arc(boid.pos.x, boid.pos.y, 4, 0, Math.PI*2);
             ctx.fill();
