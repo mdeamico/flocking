@@ -4,12 +4,11 @@ function getRand(min, max) {
 }
 
 export class Boid {
-    constructor() {
-        console.log('Boid Constructor');
-
-        this.pos = new Victor(getRand(0, 300), getRand(0, 300));
+    constructor(id) {
+        this.id = id;
+        this.pos = new Victor(getRand(0, 600), getRand(0, 300));
         this.v = new Victor(0,0);
         this.a = new Victor(0,0);
-
+        this.isAlive = true;
     }
 }

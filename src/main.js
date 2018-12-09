@@ -1,4 +1,5 @@
 import { Boid } from './boid.js'
+import { Predator} from './predator.js'
 
 function main() {
     let population = [];
@@ -7,10 +8,10 @@ function main() {
     const DESIRED_SPEED = 3;
 
     for (let i = 0; i < MAX_BOIDS; ++i) {
-        population.push(new Boid());
+        population.push(new Boid(i));
     }
     
-
+    let predator = new Predator();
 
     let canvas = document.getElementById('simulation-canvas');
     let ctx = canvas.getContext('2d');
@@ -33,16 +34,76 @@ function main() {
     function wrapPosition(pos) {
         if (pos.x < 0) {
             pos.x = canvas.width;
-        } else if (pos.x > canvas.width) {
-            pos.x = 0;
+        } else if (pos.x >= canvas.width) {
+            pos.x = 5;
         }
 
         if (pos.y < 0) {
             pos.y = canvas.height;
-        } else if (pos.y > canvas.height) {
-            pos.y = 0;
+        } else if (pos.y >= canvas.height) {
+            pos.y = 5;
         }
     }
+
+    function updatePredator(predator, boids) {
+
+        let minDist = 99999;
+        let closestBoid = null;
+        let desired = new Victor(0,0);
+        //if (predator.trackingID === -1) {
+            for (let boid of boids) {
+                let dist = predator.pos.distance(boid.pos);
+                if (dist < minDist) {
+                    minDist = dist;
+                    closestBoid = boid;
+                    predator.trackingID = boid.id;
+                }
+            }
+        // } else {
+        //     closestBoid =  boids.find((boid) => boid.id == predator.trackingID);
+        // }
+        if (closestBoid) {
+            desired = closestBoid.pos.clone().subtract(predator.pos);
+        }
+
+        if (!desired.isZero()) {
+            desired.normalize().multiplyScalar(DESIRED_SPEED * 1);
+        }
+
+        desired = steer(predator, desired);
+
+        // add forces
+        predator.a.add(desired);
+        predator.a = limitForce(predator.a);
+
+        // Update velocity
+        predator.v.add(predator.a);	
+
+        // Apply velocity to position
+        predator.pos.add(predator.v);
+
+        wrapPosition(predator.pos);
+    }
+
+    function calcRunAway(boid, predator) {
+        const runAwayDist = 50;
+        var desired = new Victor(0, 0);
+
+        var dist = boid.pos.distance(predator.pos);
+
+        if (dist < runAwayDist && dist > 0) {
+            var diff = boid.pos.clone().subtract(predator.pos).normalize().divideScalar(dist);
+            desired.add(diff);
+        }
+        
+    
+        if (desired.length() <= 0) {
+            return desired;
+        }
+
+        desired.normalize().multiplyScalar(DESIRED_SPEED * 4);
+        return steer(boid, desired);    
+    };
 
     function calcSeparation(boid, flockmates) {
         // Choose a distance at which boids start avoiding each other
@@ -134,9 +195,16 @@ function main() {
 
         // update target
         //target.add(new Victor(0.1,0));
-
+        population = population.filter((boid) => boid.isAlive);
 
         for (let boid of population) {
+            // check if eaten by predator
+            if (boid.pos.distance(predator.pos) <= predator.radius) {
+                boid.isAlive = false;
+                predator.radius += 0.25;
+                continue;
+            }
+
             // find nearby boids (flockmates)
             let flockmates = 
                 population.filter(
@@ -158,8 +226,10 @@ function main() {
             let aliForce = calcAlignment(boid, flockmates);
             let cohForce = calcCohesion(boid, flockmates);
 
+            let runForce = calcRunAway(boid, predator).multiplyScalar(10);
+
             // add forces
-            boid.a.add(sepForce).add(aliForce).add(cohForce);
+            boid.a.add(runForce).add(sepForce).add(aliForce).add(cohForce);
             boid.a = limitForce(boid.a);
 
             // Update velocity
@@ -173,16 +243,35 @@ function main() {
             // Reset acceleration
             //boid.a.zero();
         }
+
+        updatePredator(predator, population);
+
+
     }
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Background Color
+        ctx.fillStyle = "#f7f7f7";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Boids
+        ctx.fillStyle = "#000";
         for (let boid of population) {
             ctx.beginPath();
             ctx.arc(boid.pos.x, boid.pos.y, 4, 0, Math.PI*2);
             ctx.fill();
             ctx.closePath();
         }
+
+        // Draw Predator
+        ctx.fillStyle = "#FF0000";
+        ctx.beginPath();
+        ctx.arc(predator.pos.x, predator.pos.y, predator.radius, 0, Math.PI*2);
+        ctx.fill();
+        ctx.closePath();
+
     }
 
     function gameLoop(ts) {
