@@ -1,9 +1,9 @@
 export class Predator {
-    constructor() {
-        this.pos = new Victor(100, 100);
+    constructor(x, y, r) {
+        this.pos = new Victor(x, y);
         this.v = new Victor(0,0);
         this.a = new Victor(0,0);
-        this.trackingID = -1;
-        this.radius = 4;
+        this.radius = r;
+        this.shouldSplit = false;
     }
 }

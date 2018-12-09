@@ -4,8 +4,7 @@ function getRand(min, max) {
 }
 
 export class Boid {
-    constructor(id) {
-        this.id = id;
+    constructor() {
         this.pos = new Victor(getRand(0, 600), getRand(0, 300));
         this.v = new Victor(0,0);
         this.a = new Victor(0,0);
