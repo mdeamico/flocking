@@ -18,7 +18,7 @@ function main() {
     let v = new Victor(0,0);
     
 
-    let target = new Victor(50,150);
+    //let target = new Victor(50,150);
     
 
     function limitForce(vector) {
@@ -144,14 +144,14 @@ function main() {
 
             // Make decision
 
-            // Steering Force based on target
+            // //Steering Force based on target
             // let desired = target.clone().subtract(boid.pos);
 
             // if (!desired.isZero()) {
             //     desired.normalize().multiplyScalar(DESIRED_SPEED);
             // }
 
-            //let steeringForce = steer(boid, desired);
+            // let steeringForce = steer(boid, desired);
 
             // calc other forces
             let sepForce = calcSeparation(boid, flockmates);
