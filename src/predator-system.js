@@ -1,3 +1,4 @@
+import { Predator } from './predator.js'
 import { limitForce, wrapPosition, steer } from './steering-functions.js'
 import * as constants from './constants.js'
 
