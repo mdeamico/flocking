@@ -3,3 +3,5 @@ Inspired by the "Hour of Code" challenge https://code.org/learn, in particular t
 
 
 Also inspired by Dan Schiffman, who released a [video](https://www.youtube.com/watch?v=qtUV-DoSOpk) on the topic shortly after I started my project. 
+
+Also reminds me of [agar.io](https://agar.io/)
