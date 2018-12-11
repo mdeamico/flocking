@@ -20,7 +20,6 @@ export class PredatorSystem {
                 if (dist < minDist) {
                     minDist = dist;
                     closestBoid = boid;
-                    predator.trackingID = boid.id;
                 }
             }
 
