@@ -7,6 +7,9 @@ import * as constants from './constants.js'
 
 function main() {
 
+    // -------------------------------------------------------------------------
+    // --------------------- Initialize variables ------------------------------
+    // -------------------------------------------------------------------------
     // Store reference to drawing canvas
     let canvas = document.getElementById('simulation-canvas');
     let ctx = canvas.getContext('2d');
@@ -24,6 +27,7 @@ function main() {
     // Create initial predator
     let predators = [];
     predators[0] = new Predator(100, 100, 4);
+    // -------------------------------------------------------------------------
 
     function update() {
         boids = boidSystem.update(boids, predators);
