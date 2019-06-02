@@ -2,10 +2,10 @@ import { limitForce, wrapPosition, steer } from './steering-functions.js'
 import * as constants from './constants.js'
 
 export class BoidSystem {
-    constructor(canvas) {
-        // store canvas width & height for wrapping boid positions
-        this.worldWidth = canvas.width;
-        this.worldHeight = canvas.height;
+    constructor(world) {
+        // store world width & height for wrapping boid positions
+        this.worldWidth = world.width;
+        this.worldHeight = world.height;
     }
 
     calcSeparation(boid, flockmates) {

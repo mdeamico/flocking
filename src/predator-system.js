@@ -3,10 +3,10 @@ import { limitForce, wrapPosition, steer } from './steering-functions.js'
 import * as constants from './constants.js'
 
 export class PredatorSystem {
-    constructor(canvas) {
-        // store canvas width & height for wrapping predator positions
-        this.worldWidth = canvas.width;
-        this.worldHeight = canvas.height;
+    constructor(world) {
+        // store world width & height for wrapping predator positions
+        this.worldWidth = world.width;
+        this.worldHeight = world.height;
     }
 
     update(predators, boids) {
@@ -51,7 +51,7 @@ export class PredatorSystem {
 
         for (let predator of predators) {
             if (!predator.shouldSplit) continue;
-            predator.radius /= 2;
+            predator.radius /= Math.sqrt(2); // cut area in half
             predator.shouldSplit = false;
             
             predators.push(

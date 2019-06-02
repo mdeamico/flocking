@@ -9,6 +9,7 @@ export function limitForce(vector) {
 }
 
 export function wrapPosition(pos, maxWidth, maxHeight) {
+    
     if (pos.x < 0) {
         pos.x = maxWidth;
     } else if (pos.x >= maxWidth) {
